@@ -18,62 +18,66 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 
-import pages.Home;
-import pages.Page;
-import revision.tool.Start;
+import Pages.Start;
+import Pages.Page;
+import Pages.SignIn;
 
-public class Main extends JFrame implements ActionListener{
-GridBagConstraints c = new GridBagConstraints();
-public int WIDTH, HEIGHT;
-public Start start;
-public Home home;
-private Page currentPage;
+public final class Main extends JFrame implements ActionListener{
 
+    GridBagConstraints c = new GridBagConstraints();
+    public int WIDTH, HEIGHT;
+    private Page currentPage;
 
-public Main(String str) {
-super(str);
-setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-setBounds(250, 100, 800, 800);
-setVisible(true);
-WIDTH = getSize().width;
-HEIGHT = getSize().height;
-getContentPane().setBackground(Color.BLACK);
-setLayout(new GridBagLayout());
-start = new Start(this);
-home = new Home(this);
-setPage(start);
-start.start();
-addComponentListener(new ComponentAdapter(){
+    public Main(String str) {
+        super(str);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(250, 100, 800, 800);
+        setVisible(true);
+        setResizable(false);
+        WIDTH = getSize().width;
+        HEIGHT = getSize().height;
+        getContentPane().setBackground(Color.BLACK);
+        setLayout(new GridBagLayout());
+        setPage(new Start(this));
+        
 
-@Override
-public void componentResized(ComponentEvent e) {
-Dimension d = e.getComponent().getSize();
-WIDTH = d.width;
-HEIGHT = d.height;
-currentPage.paint(getContentPane().getGraphics());
-}
-});
-}
+        addComponentListener(new ComponentAdapter() {
 
-JButton b1;
-private static final long serialVersionUID = 4828986370709041989L;
+            @Override
+            public void componentResized(ComponentEvent e) {
+                Dimension d = e.getComponent().getSize();
+                WIDTH = d.width;
+                HEIGHT = d.height;
+                currentPage.paint(getContentPane().getGraphics());
+            }
+        });
+    }
+    
+    private static final long serialVersionUID = 4828986370709041989L;
 
-public static void main(String[] args) {
-new Main("Project");
-}
+    public static void main(String[] args) {
+        new Main("Project");
+    }
 
-@Override
-public void actionPerformed(ActionEvent e) {
-if (e.getActionCommand().equals("Start Game")) {
-setPage(home);
-}
-}
-public void setPage(Page page){
-getContentPane().removeAll();
-currentPage = page;
-page.paint(getContentPane().getGraphics());
-}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        switch(e.getActionCommand()){
+            case "Start Game": SignIn i = new SignIn(this, getContentPane().getGraphics());
+                addKeyListener(i);
+                setPage(i);
+            break;
+        }
+    }
+
+    public void setPage(Page page) {
+        getContentPane().removeAll();
+        currentPage = page;
+        addMouseListener(page);
+        page.paint(getContentPane().getGraphics());
+    }
+    public Page getCurrentPage(){
+        return currentPage;
+    }
 }
